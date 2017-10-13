@@ -1,12 +1,14 @@
 package com.heroku.bamboo;
 
+import com.atlassian.bamboo.security.EncryptionService;
+import com.atlassian.plugin.spring.scanner.annotation.imports.ComponentImport;
+
+import javax.inject.Inject;
+
 public class WarDeploymentTask extends AbstractDeploymentTask<WarDeploymentTaskConfigurator> {
-
-    public WarDeploymentTask() {
-        super(new WarDeploymentTaskConfigurator());
-    }
-
-    public WarDeploymentTask(StaticSandbox staticSandbox) {
-        super(new WarDeploymentTaskConfigurator(), staticSandbox);
+    @Inject
+    public WarDeploymentTask(@ComponentImport EncryptionService encryptionService,
+                             WarDeploymentTaskConfigurator warDeploymentTaskConfigurator) {
+        super(encryptionService, warDeploymentTaskConfigurator);
     }
 }

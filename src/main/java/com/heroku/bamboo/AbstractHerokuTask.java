@@ -7,7 +7,6 @@ import com.atlassian.bamboo.task.CommonTaskType;
 import com.atlassian.bamboo.task.TaskException;
 import com.atlassian.bamboo.task.TaskResult;
 import com.atlassian.bamboo.task.TaskResultBuilder;
-import com.atlassian.plugin.spring.scanner.annotation.imports.ComponentImport;
 import com.heroku.api.App;
 import com.heroku.api.Heroku;
 import com.heroku.api.HerokuAPI;
@@ -21,12 +20,16 @@ import java.net.HttpURLConnection;
  */
 public abstract class AbstractHerokuTask implements CommonTaskType
 {
+    final StaticSandbox staticSandbox;
+    private final EncryptionService encryptionService;
 
-    protected final StaticSandbox staticSandbox;
-    protected EncryptionService encryptionService;
+    AbstractHerokuTask(EncryptionService encryptionService, StaticSandbox staticSandbox) {
+        this.encryptionService = encryptionService;
+        this.staticSandbox = staticSandbox;
+    }
 
-    protected AbstractHerokuTask() {
-        this(new StaticSandbox() {
+    AbstractHerokuTask(EncryptionService encryptionService) {
+        this(encryptionService, new StaticSandbox() {
             @Override
             public TaskResult success(CommonTaskContext taskContext) {
                 return TaskResultBuilder.newBuilder(taskContext).success().build();
@@ -37,10 +40,6 @@ public abstract class AbstractHerokuTask implements CommonTaskType
                 return TaskResultBuilder.newBuilder(taskContext).failed().build();
             }
         });
-    }
-
-    public AbstractHerokuTask(StaticSandbox staticSandbox) {
-        this.staticSandbox = staticSandbox;
     }
 
     @NotNull
@@ -94,14 +93,8 @@ public abstract class AbstractHerokuTask implements CommonTaskType
     /**
      * A sandbox for static methods that don't play well with jMock
      */
-    protected static interface StaticSandbox {
+    protected interface StaticSandbox {
         TaskResult success(CommonTaskContext taskContext);
         TaskResult failed(CommonTaskContext taskContext);
-    }
-
-    /** Spring setter */
-    public void setEncryptionService(@ComponentImport EncryptionService encryptionService)
-    {
-        this.encryptionService = encryptionService;
     }
 }

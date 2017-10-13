@@ -1,6 +1,7 @@
 package com.heroku.bamboo;
 
 import com.atlassian.bamboo.build.logger.BuildLogger;
+import com.atlassian.bamboo.security.EncryptionServiceImpl;
 import com.atlassian.bamboo.task.CommonTaskContext;
 import com.atlassian.bamboo.task.TaskResult;
 import com.heroku.api.App;
@@ -20,7 +21,7 @@ public class AbstractHerokuTaskIT  extends BaseHerokuTest {
     public final ExpectedException thrown = ExpectedException.none();
 
 
-    final AbstractHerokuTask step = new AbstractHerokuTask() {
+    final AbstractHerokuTask step = new AbstractHerokuTask(new EncryptionServiceImpl()) {
         @Override
         protected TaskResult execute(CommonTaskContext taskContext, String apiKey, HerokuAPI api, App app) {
             throw new UnsupportedOperationException();

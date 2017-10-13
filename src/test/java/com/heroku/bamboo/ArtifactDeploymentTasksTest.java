@@ -52,7 +52,7 @@ public class ArtifactDeploymentTasksTest extends MockObjectTestCase {
 
         private TestingDeploymentTaskConfigurator()
         {
-            setEncryptionService(new EncryptionServiceImpl());
+            super(new EncryptionServiceImpl(), null);
         }
 
         @Override

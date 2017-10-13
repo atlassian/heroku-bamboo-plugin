@@ -4,9 +4,9 @@ import com.atlassian.bamboo.collections.ActionParametersMap;
 import com.atlassian.bamboo.security.EncryptionException;
 import com.atlassian.bamboo.security.EncryptionService;
 import com.atlassian.bamboo.task.AbstractTaskConfigurator;
+import com.atlassian.bamboo.task.TaskConfiguratorHelper;
 import com.atlassian.bamboo.task.TaskDefinition;
 import com.atlassian.bamboo.utils.error.ErrorCollection;
-import com.atlassian.plugin.spring.scanner.annotation.imports.ComponentImport;
 import com.google.common.collect.ImmutableList;
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
@@ -20,7 +20,13 @@ public abstract class AbstractDeploymentTaskConfigurator extends AbstractTaskCon
     protected static final String API_KEY = "apiKey";
     protected static final String APP_NAME = "appName";
 
-    protected EncryptionService encryptionService;
+    private final EncryptionService encryptionService;
+
+    protected AbstractDeploymentTaskConfigurator(EncryptionService encryptionService,
+                                                 TaskConfiguratorHelper taskConfiguratorHelper) {
+        this.encryptionService = encryptionService;
+        setTaskConfiguratorHelper(taskConfiguratorHelper);
+    }
 
     @Override
     public void populateContextForCreate(@NotNull final Map<String, Object> context) {
@@ -30,12 +36,6 @@ public abstract class AbstractDeploymentTaskConfigurator extends AbstractTaskCon
     @Override
     public void populateContextForEdit(@NotNull final Map<String, Object> context, @NotNull final TaskDefinition taskDefinition) {
         super.populateContextForEdit(context, taskDefinition);
-        taskConfiguratorHelper.populateContextWithConfiguration(context, taskDefinition, getFieldsToCopy());
-    }
-
-    @Override
-    public void populateContextForView(@NotNull final Map<String, Object> context, @NotNull final TaskDefinition taskDefinition) {
-        super.populateContextForView(context, taskDefinition);
         taskConfiguratorHelper.populateContextWithConfiguration(context, taskDefinition, getFieldsToCopy());
     }
 
@@ -76,11 +76,5 @@ public abstract class AbstractDeploymentTaskConfigurator extends AbstractTaskCon
                 params.put(API_KEY, encryptionService.encrypt(params.getString(API_KEY)));
             }
         }
-    }
-
-    /** Spring setter */
-    public void setEncryptionService(@ComponentImport EncryptionService encryptionService)
-    {
-        this.encryptionService = encryptionService;
     }
 }
