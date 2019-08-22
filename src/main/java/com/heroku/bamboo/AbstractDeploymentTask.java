@@ -1,7 +1,9 @@
 package com.heroku.bamboo;
 
 import com.atlassian.bamboo.build.logger.BuildLogger;
-import com.atlassian.bamboo.task.*;
+import com.atlassian.bamboo.security.EncryptionService;
+import com.atlassian.bamboo.task.CommonTaskContext;
+import com.atlassian.bamboo.task.TaskResult;
 import com.heroku.api.App;
 import com.heroku.api.HerokuAPI;
 import com.herokuapp.directto.client.DeployRequest;
@@ -25,13 +27,8 @@ public abstract class AbstractDeploymentTask<P extends DeploymentPipeline> exten
 
     private final P pipeline;
 
-    public AbstractDeploymentTask(P pipeline) {
-        super();
-        this.pipeline = pipeline;
-    }
-
-    public AbstractDeploymentTask(P pipeline, StaticSandbox staticSandbox) {
-        super(staticSandbox);
+    protected AbstractDeploymentTask(EncryptionService encryptionService, P pipeline) {
+        super(encryptionService);
         this.pipeline = pipeline;
     }
 
